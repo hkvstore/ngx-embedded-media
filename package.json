@@ -8,13 +8,13 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build:lib": "ng build embedded-media"
+    "build:lib": "ng build embedded-media",
+    "publish": "npm publish dist\\embedded-media"
   },
   "private": true,
   "dependencies": {
     "@angular/animations": "~8.2.4",
     "@angular/common": "~8.2.4",
-    "@angular/compiler": "~8.2.4",
     "@angular/core": "~8.2.4",
     "@angular/forms": "~8.2.4",
     "@angular/platform-browser": "~8.2.4",

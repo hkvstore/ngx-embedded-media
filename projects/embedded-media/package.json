@@ -1,16 +1,19 @@
 {
-    "name": "ngx-embedded-media",
+    "name": "@hkvstore/ngx-embedded-media",
     "description": "Embed media from from top tier media providers directly in your Angular 6+ application",
-    "author": "Benny Megidish",
+    "author": "e.World Technology Limited",
     "license": "Apache-2.0",
     "version": "8.2.3",
     "repository": {
         "type": "git",
-        "url": "https://github.com/bennymeg/ngx-embedded-media.git"
+        "url": "https://github.com/hkvstore/ngx-embedded-media.git"
     },
     "scripts": {
         "test": "ng test",
         "lint": "ng lint"
+    },
+    "publishConfig": {
+        "access": "public"
     },
     "keywords": [
         "embedded",
