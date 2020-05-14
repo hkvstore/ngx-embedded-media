@@ -3,7 +3,7 @@
     "description": "Embed media from from top tier media providers directly in your Angular 6+ application",
     "author": "e.World Technology Limited",
     "license": "Apache-2.0",
-    "version": "8.2.3",
+    "version": "8.2.4",
     "repository": {
         "type": "git",
         "url": "https://github.com/hkvstore/ngx-embedded-media.git"
@@ -30,7 +30,7 @@
         "typescript"
     ],
     "peerDependencies": {
-        "@angular/common": "^8.0.0",
-        "@angular/core": "^8.0.0"
+        "@angular/common": "~9.1.6",
+        "@angular/core": "~9.1.6"
     }
 }
