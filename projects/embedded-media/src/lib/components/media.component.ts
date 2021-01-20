@@ -12,32 +12,50 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 import { Provider } from '../factories/providers.factory';
 import { EmbeddedMediaService } from '../services/media.service';
+import { Styles, Attributes, Options } from '../interfaces/interfaces';
 
 @Component({
   selector: 'embedded-media',
   templateUrl: './media.component.html',
-  styleUrls: ['./media.component.scss']
+  styleUrls: ['./media.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MediaComponent implements OnInit {
+export class MediaComponent implements OnInit, OnChanges {
   embeddedMediaHtml: string = '';
-  mediaOptions: any = {};
+  mediaOptions: Options = {};
 
-  @Input('video') video: string;
-  @Input('image') image: string;
-  @Input('provider') provider: Provider;
-  @Input('query') query: string;
-  @Input('attributes') attributes: string;
-  @Input('resolution') options: string;
+  @Input() playlist?: string;
+  @Input() video?: string;
+  @Input() image?: string;
+  @Input() provider?: Provider;
+  @Input() classes?: string[];
+  @Input() styles?: Styles;
+  @Input() attributes?: Attributes | string;  // fixme: remove string option on next release
+  @Input() query?: string;
+  @Input() resolution?: string;
+  // @Input('ratio') ratio?: string;
 
   constructor(private _mediaService: EmbeddedMediaService) { }
 
   ngOnInit() {
+    this.renderComponent();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('[NGX EMBEDDED MEDIA] change detected: ', changes);
+
+    this.renderComponent();
+  }
+
+  public renderComponent() {
     this.parseMediaOptions();
 
-    if (this.video) {
+    if (this.playlist) {
+      this.embeddedMediaHtml = this._mediaService.getMedia(this.playlist, 'playlist', this.provider, this.mediaOptions);
+    } else if (this.video) {
       this.embeddedMediaHtml = this._mediaService.getMedia(this.video, 'video', this.provider, this.mediaOptions);
     } else if (this.image) {
       this._mediaService.getMedia(this.image, 'image', this.provider, this.mediaOptions).then(response => {
@@ -48,10 +66,48 @@ export class MediaComponent implements OnInit {
     }
   }
 
-  parseMediaOptions() {
-    if (this.query) this.mediaOptions['query'] = JSON.parse(this.query);
-    if (this.attributes) this.mediaOptions['attributes'] = JSON.parse(this.attributes);
-    if (this.options) this.mediaOptions['resolution'] = this.options;
+  private parseMediaOptions() {
+    if (this.query) {
+      this.mediaOptions['query'] = JSON.parse(this.query);
+    }
+
+    if (this.attributes) {
+      if (typeof this.attributes === 'string') {  // fixme: remove string option on next release
+        this.mediaOptions['attributes'] = JSON.parse(this.attributes);
+      } else {
+        this.mediaOptions['attributes'] = this.attributes;
+      }
+    } else if (this.classes || this.styles) {
+      this.mediaOptions['attributes'] = {};
+    }
+
+    if (this.classes) {
+      if (this.mediaOptions['attributes']['class']) {
+        this.mediaOptions['attributes']['class'] = 
+          this.mediaOptions['attributes']['class'].toString().concat(' ', this.classes.join(' '));
+      } else {
+        this.mediaOptions['attributes']['class'] = this.classes.join(' ');
+      }
+    }
+
+    if (this.styles) {
+      if (this.mediaOptions['attributes']['style']) {
+        this.mediaOptions['attributes']['style'] = 
+          JSON.stringify(Object.assign(JSON.parse(this.mediaOptions['attributes']['style'].toString()), this.styles));
+      } else {
+        this.mediaOptions['attributes']['style'] = JSON.stringify(this.styles);
+      }
+    }
+
+    if (this.resolution) {
+      this.mediaOptions['resolution'] = this.resolution;
+    }
+  }
+
+  private isValidRatio(ratio: string): boolean {
+    const expression = new RegExp('^\d+([.]\d+)?:\d+([.]\d+)?$');
+
+    return expression.test(ratio);
   }
 
 }

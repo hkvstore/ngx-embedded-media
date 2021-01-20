@@ -55,6 +55,25 @@ export class YoutubeProvider extends MediaProvider {
         // return this.sanitize_iframe(`<iframe src="https://www.youtube.com/embed/${id}${options.query}" ${options.attributes} frameborder="0" allowfullscreen></iframe>`);
     }
 
+    getPlaylist(id: string, options?: any): string {
+        options = this.preprocessOptions(id, options);
+        options = this.parseGlobalOptions(options);
+
+        return this.sanitize_iframe('<iframe src="https://www.youtube.com/embed/videoseries'
+          + id + options.query + '"' + options.attributes
+          + ' frameborder="0" allowfullscreen></iframe>');
+    }
+
+    preprocessOptions(id: string, options?: any): any {
+        if (!options.hasOwnProperty('query')) {
+            options.query = {};
+        }
+
+        options.query['list'] = id;
+
+        return options;
+    }
+
     getMediaId(url: URL): string {
         let id: string = '';
 
